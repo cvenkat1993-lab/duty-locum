@@ -62,8 +62,8 @@ export default function AdminDashboard() {
         totalJobs: jobsData.length,
         totalApplications: applicationsData.length,
         totalUsers: usersData.length,
-        pendingApplications: applicationsData.filter((app: any) => app.status === "pending").length,
-        acceptedApplications: applicationsData.filter((app: any) => app.status === "accepted").length,
+        pendingApplications: (applicationsData as any[]).filter((app: any) => app.status === "pending").length,
+        acceptedApplications: (applicationsData as any[]).filter((app: any) => app.status === "accepted").length,
       });
     } catch (error) {
       console.error("Error loading data:", error);
