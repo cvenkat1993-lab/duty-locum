@@ -3,8 +3,38 @@ import "./globals.css";
 import GoogleMapsProvider from "@/components/GoogleMapsProvider";
 
 export const metadata: Metadata = {
-  title: "Doctor Jobs",
-  description: "Search doctor jobs nearby",
+  title: {
+    default: "Doctor Jobs — Find Doctor Jobs in India",
+    template: "%s | Doctor Jobs",
+  },
+  description:
+    "India's dedicated platform for doctor job search. Find full-time, part-time, locum, and contract positions at hospitals and clinics. Hospitals can post jobs and hire directly.",
+  keywords: [
+    "doctor jobs India",
+    "medical jobs India",
+    "hospital jobs",
+    "locum doctor",
+    "MBBS jobs",
+    "MD jobs",
+    "doctor recruitment India",
+    "physician jobs India",
+  ],
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    siteName: "Doctor Jobs",
+    title: "Doctor Jobs — Find Doctor Jobs in India",
+    description:
+      "India's dedicated platform for doctor job search. Find full-time, part-time, locum, and contract positions at hospitals and clinics across India.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
 };
 
 export default function RootLayout({

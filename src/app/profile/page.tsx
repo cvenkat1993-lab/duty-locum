@@ -49,7 +49,7 @@ export default function ProfilePage() {
           >
             👤 User Profile
           </div>
-          <div
+          {/* <div
             className={`tab ${tab === "posted" ? "tab-active" : ""}`}
             onClick={() => setTab("posted")}
           >
@@ -60,7 +60,7 @@ export default function ProfilePage() {
             onClick={() => setTab("applied")}
           >
             📋 Jobs Applied
-          </div>
+          </div> */}
         </div>
 
         {/* Tab Content */}

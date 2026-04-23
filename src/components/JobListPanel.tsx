@@ -44,21 +44,21 @@ export default function JobListPanel({
       // User is now logged in, the parent component will re-render
       // and show the "Express Interest" button instead
     } catch (error: any) {
-      console.error("Login error:", error.code, error.message);
-      
-      // Silent handling for user cancellations
+      // Silent handling for user cancellations — not a real error
       if (
         error.code === 'auth/cancelled-popup-request' ||
         error.code === 'auth/popup-closed-by-user'
       ) {
         return;
       }
-      
+
       if (error.code === 'auth/popup-blocked') {
         alert("Pop-up blocked! Please allow pop-ups for this site, or click the profile icon to login.");
         return;
       }
-      
+
+      // Only log genuinely unexpected errors
+      console.error("Login error:", error.code, error.message);
       alert("Login failed. Please try again or use the profile menu to login.");
     } finally {
       setIsLoggingIn(false);

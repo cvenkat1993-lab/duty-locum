@@ -99,9 +99,9 @@ export default function Header() {
             {/* Desktop Navigation */}
             {!isMobile && (
               <nav style={{ display: "flex", alignItems: "center", gap: 24 }}>
-                <Link href="/" style={{ textDecoration: "none", color: "var(--foreground)" }}>
+               {/* <Link href="/" style={{ textDecoration: "none", color: "var(--foreground)" }}>
                   Home
-                </Link>
+                </Link> */}
                 <Link href="/browse-jobs" style={{ textDecoration: "none", color: "var(--foreground)" }}>
                   Browse Jobs
                 </Link>

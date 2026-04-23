@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
+import SpecialtyQuiz from "@/components/SpecialtyQuiz";
 
 interface DoctorProfile {
   name: string;
@@ -18,7 +19,8 @@ interface DoctorProfile {
 
 export default function UserProfileTab({ user }: { user: any }) {
   const institutionInputRef = useRef<HTMLInputElement | null>(null);
-  
+  const router = useRouter();
+
   const [profile, setProfile] = useState<DoctorProfile>({
     name: user?.displayName || "",
     email: user?.email || "",
@@ -29,17 +31,22 @@ export default function UserProfileTab({ user }: { user: any }) {
     experience: "",
     phoneNumber: "",
   });
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
-  const router = useRouter();
+
+  // Quiz state
+  const [specialtyVerified, setSpecialtyVerified] = useState(false);
+  const [verifiedDepartment, setVerifiedDepartment] = useState("");
+  const [quizAttempts, setQuizAttempts] = useState(0);
+  const [showQuiz, setShowQuiz] = useState(false);
 
   useEffect(() => {
     if (!user) return;
     loadProfile();
   }, [user]);
 
-  // Setup Google Places Autocomplete for institution
   useEffect(() => {
     if (!window.google || !institutionInputRef.current || loading) return;
 
@@ -54,26 +61,19 @@ export default function UserProfileTab({ user }: { user: any }) {
 
     autocomplete.addListener("place_changed", () => {
       const place = autocomplete.getPlace();
-
       if (place.name) {
         if (institutionInputRef.current) {
           institutionInputRef.current.value = place.name;
         }
-        setProfile((prev) => ({
-          ...prev,
-          currentInstitution: place.name || "",
-        }));
+        setProfile((prev) => ({ ...prev, currentInstitution: place.name || "" }));
       }
     });
   }, [loading]);
 
   const loadProfile = async () => {
     if (!user) return;
-    
     try {
-      const docRef = doc(db, "users", user.uid);
-      const docSnap = await getDoc(docRef);
-      
+      const docSnap = await getDoc(doc(db, "users", user.uid));
       if (docSnap.exists()) {
         const data = docSnap.data();
         setProfile({
@@ -86,10 +86,13 @@ export default function UserProfileTab({ user }: { user: any }) {
           experience: data.experience || "",
           phoneNumber: data.phoneNumber || "",
         });
-        
-        // Check if profile is complete (already saved)
-        if (data.name && data.education && data.currentJobTitle && data.currentInstitution && 
-            data.department && data.phoneNumber) {
+        setSpecialtyVerified(data.specialtyVerified || false);
+        setVerifiedDepartment(data.verifiedDepartment || "");
+        setQuizAttempts(data.quizAttempts || 0);
+        if (
+          data.name && data.education && data.currentJobTitle &&
+          data.currentInstitution && data.department && data.phoneNumber
+        ) {
           setIsSaved(true);
         }
       }
@@ -100,13 +103,32 @@ export default function UserProfileTab({ user }: { user: any }) {
     }
   };
 
+  const handleDepartmentChange = (value: string) => {
+    setProfile((prev) => ({ ...prev, department: value }));
+    if (specialtyVerified && value !== verifiedDepartment) {
+      setSpecialtyVerified(false);
+      setVerifiedDepartment("");
+    }
+  };
+
+  const handleVerified = () => {
+    setSpecialtyVerified(true);
+    setVerifiedDepartment(profile.department);
+  };
+
   const handleSave = async () => {
     if (!user) return;
 
-    // Validation
-    if (!profile.name || !profile.education || !profile.currentJobTitle || !profile.currentInstitution || 
-        !profile.department || !profile.phoneNumber) {
+    if (
+      !profile.name || !profile.education || !profile.currentJobTitle ||
+      !profile.currentInstitution || !profile.department || !profile.phoneNumber
+    ) {
       alert("Please fill all required fields (marked with *)");
+      return;
+    }
+
+    if (!specialtyVerified) {
+      alert("Please verify your specialty by taking the quiz before saving your profile.");
       return;
     }
 
@@ -115,16 +137,13 @@ export default function UserProfileTab({ user }: { user: any }) {
       await setDoc(doc(db, "users", user.uid), {
         ...profile,
         uid: user.uid,
+        specialtyVerified: true,
+        verifiedDepartment,
         updatedAt: new Date(),
       });
-      
       setIsSaved(true);
       alert("✓ Profile saved successfully! Redirecting to homepage...");
-      
-      // Redirect to homepage after 1 second
-      setTimeout(() => {
-        router.push("/");
-      }, 1000);
+      setTimeout(() => router.push("/"), 1000);
     } catch (error) {
       console.error("Error saving profile:", error);
       alert("Failed to save profile. Please try again.");
@@ -141,8 +160,27 @@ export default function UserProfileTab({ user }: { user: any }) {
     );
   }
 
+  const canTakeQuiz = profile.department.trim().length > 0;
+  const needsReverification = isSaved && profile.department !== verifiedDepartment;
+
   return (
     <div style={{ maxWidth: 700, margin: "0 auto" }}>
+
+      {showQuiz && (
+        <SpecialtyQuiz
+          user={user}
+          department={profile.department}
+          currentAttempts={quizAttempts}
+          onVerified={handleVerified}
+          onClose={() => {
+            setShowQuiz(false);
+            getDoc(doc(db, "users", user.uid)).then((snap) => {
+              if (snap.exists()) setQuizAttempts(snap.data().quizAttempts || 0);
+            });
+          }}
+        />
+      )}
+
       <div className="card">
         <div className="card-header">
           <h3 style={{ margin: 0 }}>Doctor Profile</h3>
@@ -152,7 +190,8 @@ export default function UserProfileTab({ user }: { user: any }) {
         </div>
 
         <div className="alert alert-warning">
-          <strong>Required fields</strong> are marked with <span style={{ color: "var(--danger)" }}>*</span>
+          <strong>Required fields</strong> are marked with{" "}
+          <span style={{ color: "var(--danger)" }}>*</span>
         </div>
 
         {/* Name */}
@@ -244,13 +283,13 @@ export default function UserProfileTab({ user }: { user: any }) {
           <small className="form-help">Hospital/Medical College where you currently work or study</small>
         </div>
 
-        {/* Department */}
+        {/* Department/Specialty + Verification */}
         <div className="form-group">
           <label className="form-label form-label-required">Department/Specialty</label>
           <input
             type="text"
             value={profile.department}
-            onChange={(e) => setProfile({ ...profile, department: e.target.value })}
+            onChange={(e) => handleDepartmentChange(e.target.value)}
             placeholder="Start typing to select or enter custom department..."
             list="departments"
           />
@@ -319,6 +358,43 @@ export default function UserProfileTab({ user }: { user: any }) {
             <option value="Occupational Health" />
           </datalist>
           <small className="form-help">Type to search or enter a custom department</small>
+
+          {/* Verification status */}
+          <div style={{ marginTop: 12 }}>
+            {specialtyVerified && profile.department === verifiedDepartment ? (
+              <div style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                background: "#e8f5e9", border: "1px solid #a5d6a7",
+                borderRadius: 24, padding: "6px 16px",
+                color: "#2e7d32", fontWeight: 600, fontSize: 13,
+              }}>
+                ✓ Specialty Verified
+              </div>
+            ) : canTakeQuiz ? (
+              <div>
+                <div style={{
+                  display: "inline-flex", alignItems: "center", gap: 8,
+                  background: "#fff8e1", border: "1px solid #ffe082",
+                  borderRadius: 8, padding: "8px 14px",
+                  color: "#7a5300", fontSize: 13, marginBottom: 10,
+                }}>
+                  ⚠️ Specialty verification required to save profile
+                  {needsReverification && " — department changed, please re-verify"}
+                </div>
+                <br />
+                <button
+                  type="button"
+                  onClick={() => setShowQuiz(true)}
+                  className="btn btn-primary"
+                  style={{ fontSize: 13 }}
+                >
+                  🧪 Take Specialty Verification Quiz
+                  {quizAttempts > 0 
+                  }
+                </button>
+              </div>
+            ) : null}
+          </div>
         </div>
 
         {/* Experience */}
@@ -346,12 +422,22 @@ export default function UserProfileTab({ user }: { user: any }) {
           {isSaved && <small className="form-help" style={{ color: "green" }}>✓ Locked after save</small>}
         </div>
 
-        {/* Save Button */}
+        {/* Save button */}
+        {!specialtyVerified && profile.department && (
+          <div className="alert alert-warning" style={{ marginTop: 8 }}>
+            Complete specialty verification above before saving.
+          </div>
+        )}
+
         <button
           onClick={handleSave}
-          disabled={saving}
+          disabled={saving || !specialtyVerified}
           className="btn btn-primary btn-mobile-full"
-          style={{ marginTop: 16 }}
+          style={{
+            marginTop: 16,
+            opacity: !specialtyVerified ? 0.5 : 1,
+            cursor: !specialtyVerified ? "not-allowed" : "pointer",
+          }}
         >
           {saving ? (
             <>
