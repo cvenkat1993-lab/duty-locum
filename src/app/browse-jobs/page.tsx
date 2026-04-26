@@ -5,6 +5,8 @@ import { adminDb } from "@/lib/firebase-admin";
 import { Metadata } from "next";
 import BrowseJobsClient from "./BrowseJobsClient";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Browse Doctor Jobs in India | Doctor Jobs",
   description:

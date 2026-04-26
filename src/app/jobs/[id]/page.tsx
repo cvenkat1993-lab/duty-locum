@@ -6,10 +6,14 @@ import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import JobDetailClient from "@/components/JobDetailClient";
 
+export const dynamic = 'force-dynamic';
+
 interface Props {
   params: Promise<{ id: string }>;
 }
 
+// Required when next.config has output: 'export'.
+// Fetches all job IDs at build time so each job page can be pre-rendered.
 // Converts Firestore class instances (Timestamp, GeoPoint) to plain objects
 // so they can be passed from Server Component → Client Component without errors.
 function serialiseJob(id: string, data: any): any {

@@ -1,4 +1,6 @@
 import { adminDb } from "@/lib/firebase-admin";
+
+export const dynamic = 'force-dynamic';
 import { MetadataRoute } from "next";
 
 const CITY_SLUGS = [

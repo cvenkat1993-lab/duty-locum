@@ -124,13 +124,13 @@ const CITIES: Record<string, {
   },
 };
 
+// Force server-side rendering at request time — never pre-rendered at build time
+export const dynamic = 'force-dynamic';
+
 interface Props {
   params: Promise<{ city: string }>;
 }
 
-export async function generateStaticParams() {
-  return Object.keys(CITIES).map((city) => ({ city }));
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { city } = await params;
