@@ -1,5 +1,7 @@
 "use client";
 
+import MapPinButton from "@/components/MapPinButton";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { doc, getDoc } from "firebase/firestore";
@@ -511,8 +513,9 @@ function JobCard({
             <h4 style={{ margin: 0, fontSize: 15, fontWeight: 600, lineHeight: 1.3 }}>
               {job.title}
             </h4>
-            <p style={{ margin: "4px 0 0 0", fontSize: 13, color: "#666" }}>
+            <p style={{ margin: "4px 0 0 0", fontSize: 13, color: "#666", display: "flex", alignItems: "center", gap: 6 }}>
               {job.hospitalName}
+              <MapPinButton job={job} />
             </p>
           </div>
           {job.workType && (
@@ -625,8 +628,9 @@ function JobCard({
           </div>
           
           {/* Hospital */}
-          <p style={{ margin: "0 0 8px 0", fontSize: 14, color: "#555", fontWeight: 500 }}>
+          <p style={{ margin: "0 0 8px 0", fontSize: 14, color: "#555", fontWeight: 500, display: "flex", alignItems: "center", gap: 6 }}>
             {job.hospitalName}
+            <MapPinButton job={job} />
           </p>
 
           {/* Metadata in one line */}

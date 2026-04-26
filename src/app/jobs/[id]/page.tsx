@@ -4,6 +4,7 @@ import { buildJobSchema } from "@/lib/schema";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
+import MapPinButton from "@/components/MapPinButton";
 import JobDetailClient from "@/components/JobDetailClient";
 
 export const dynamic = 'force-dynamic';
@@ -82,8 +83,9 @@ export default async function JobDetailPage({ params }: Props) {
       <div className="container" style={{ paddingTop: 20, paddingBottom: 40, maxWidth: 800 }}>
         {/* Static crawlable HTML */}
         <h1 style={{ marginBottom: 4 }}>{job.title}</h1>
-        <h2 style={{ fontWeight: 500, fontSize: 20, color: "#555", marginBottom: 16 }}>
+        <h2 style={{ fontWeight: 500, fontSize: 20, color: "#555", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
           {job.hospitalName}
+          <MapPinButton job={job} style={{ width: 26, height: 26 }} />
         </h2>
 
         <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 20px", fontSize: 14, color: "#666", marginBottom: 16 }}>

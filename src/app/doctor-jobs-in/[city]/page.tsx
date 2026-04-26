@@ -18,6 +18,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Link from "next/link";
+import MapPinButton from "@/components/MapPinButton";
 
 // ── City configuration ──────────────────────────────────────
 // Add more cities here as your platform grows.
@@ -208,6 +209,19 @@ export default async function CityJobsPage({ params }: Props) {
 
   return (
     <div style={{ minHeight: "100vh", background: "#f9f9f9" }}>
+      <style>{`
+        @media (min-width: 768px) {
+          .city-page-grid { grid-template-columns: minmax(0,1fr) 300px !important; gap: 32px !important; }
+        }
+        .city-sidebar { display: none; }
+        @media (min-width: 768px) {
+          .city-sidebar { display: flex; }
+        }
+        .city-mobile-stats { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+        @media (min-width: 768px) {
+          .city-mobile-stats { display: none; }
+        }
+      `}</style>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
@@ -216,6 +230,19 @@ export default async function CityJobsPage({ params }: Props) {
       <Header />
 
       <div className="container" style={{ paddingTop: 32, paddingBottom: 60, maxWidth: 900 }}>
+
+        {/* ── Mobile stats strip — visible only on mobile ── */}
+        <div className="city-mobile-stats">
+          <div style={{ background: "#f0f7ff", borderRadius: 8, padding: "8px 14px", fontSize: 13 }}>
+            <strong>{cityJobs.length}</strong> <span style={{ color: "#555" }}>open</span>
+          </div>
+          <div style={{ background: "#f0f7ff", borderRadius: 8, padding: "8px 14px", fontSize: 13 }}>
+            <strong>{cityJobs.filter((j: any) => j.workType === "Full-time").length}</strong> <span style={{ color: "#555" }}>full-time</span>
+          </div>
+          <div style={{ background: "#f0f7ff", borderRadius: 8, padding: "8px 14px", fontSize: 13 }}>
+            <strong>{cityJobs.filter((j: any) => j.workType === "Locum" || j.workType === "Part-time").length}</strong> <span style={{ color: "#555" }}>locum/part</span>
+          </div>
+        </div>
 
         {/* ── Hero ── */}
         <div style={{ marginBottom: 32 }}>
@@ -235,7 +262,7 @@ export default async function CityJobsPage({ params }: Props) {
           </p>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: 32, alignItems: "start" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr)", gap: 24 }} className="city-page-grid">
 
           {/* ── Main Content ── */}
           <div>
@@ -302,8 +329,9 @@ export default async function CityJobsPage({ params }: Props) {
                             <h3 style={{ margin: "0 0 4px 0", fontSize: 16, fontWeight: 600 }}>
                               {job.title}
                             </h3>
-                            <p style={{ margin: "0 0 8px 0", fontSize: 14, color: "#555" }}>
+                            <p style={{ margin: "0 0 8px 0", fontSize: 14, color: "#555", display: "flex", alignItems: "center", gap: 6 }}>
                               {job.hospitalName}
+                              <MapPinButton job={job} />
                             </p>
                             <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 16px", fontSize: 13, color: "#666" }}>
                               {job.department && <span>🔬 {job.department}</span>}
@@ -393,7 +421,7 @@ export default async function CityJobsPage({ params }: Props) {
           </div>
 
           {/* ── Sidebar ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          <div className="city-sidebar" style={{ flexDirection: "column", gap: 20 }}>
 
             {/* Quick stats */}
             <div className="card">

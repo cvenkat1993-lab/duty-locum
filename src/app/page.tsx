@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import SearchBar from "@/components/SearchBar";
-import PostJobCTA from "@/components/PostJobCTA";
 import MapView from "@/components/MapView";
 import JobListPanel from "@/components/JobListPanel";
 import Header from "@/components/Header";
@@ -11,11 +10,14 @@ import { Job } from "@/types/job";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, fetchJobs, applyForJob, db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function HomePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [mapCenter, setMapCenter] = useState({ lat: 22.9734, lng: 78.6569 });
+  const [mapZoom, setMapZoom] = useState(6);
+  const [highlightedJobId, setHighlightedJobId] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
   const [allJobs, setAllJobs] = useState<Job[]>([]);
   const [mapJobs, setMapJobs] = useState<Job[]>([]);
@@ -57,6 +59,34 @@ export default function HomePage() {
   useEffect(() => {
     fetchJobs().then(setAllJobs);
   }, []);
+
+  // Handle incoming map pin redirect: /?lat=xx&lng=xx&jobId=yyy
+  useEffect(() => {
+    const lat = searchParams.get("lat");
+    const lng = searchParams.get("lng");
+    const jobId = searchParams.get("jobId");
+    if (lat && lng) {
+      setMapCenter({ lat: parseFloat(lat), lng: parseFloat(lng) });
+      setMapZoom(16); // Street level — same as pinning in Google Maps
+    }
+    if (jobId) {
+      setHighlightedJobId(jobId);
+    }
+  }, [searchParams]);
+
+  // When arriving via pin link: populate job list + scroll once allJobs loads
+  useEffect(() => {
+    if (!highlightedJobId || allJobs.length === 0) return;
+
+    // Show all jobs on the map (same as default home view)
+    setMapJobs(allJobs);
+
+    // Scroll to the specific highlighted card
+    setTimeout(() => {
+      const el = document.getElementById(`job-card-${highlightedJobId}`);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 300);
+  }, [highlightedJobId, allJobs]);
 
   const handleSearch = (filters: {
     lat?: number;
@@ -218,8 +248,10 @@ export default function HomePage() {
             }}>
               <MapView
                 center={mapCenter}
+                zoom={mapZoom}
                 jobs={mapJobs}
                 onMarkerClick={handleMarkerClick}
+                highlightedJobId={highlightedJobId}
               />
             </div>
           )}
@@ -235,6 +267,7 @@ export default function HomePage() {
                 isLoggedIn={!!user}
                 onApply={handleApply}
                 appliedJobIds={appliedJobIds}
+                highlightedJobId={highlightedJobId}
               />
             </div>
           )}

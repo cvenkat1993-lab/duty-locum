@@ -1,5 +1,7 @@
 "use client";
 
+import MapPinButton from "@/components/MapPinButton";
+
 import { Job } from "@/types/job";
 import { useRouter } from "next/navigation";
 import { signInWithPopup } from "firebase/auth";
@@ -11,11 +13,13 @@ export default function JobListPanel({
   isLoggedIn,
   onApply,
   appliedJobIds = new Set(),
+  highlightedJobId = null,
 }: {
   jobs: Job[];
   isLoggedIn: boolean;
   onApply: (job: Job) => void;
   appliedJobIds?: Set<string>;
+  highlightedJobId?: string | null;
 }) {
   const router = useRouter();
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -85,12 +89,21 @@ export default function JobListPanel({
 
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         {jobs.map((job) => (
-          <div key={job.id} className="card">
+          <div
+            key={job.id}
+            id={`job-card-${job.id}`}
+            className="card"
+            style={highlightedJobId === job.id ? {
+              border: "2px solid #1a73e8",
+              boxShadow: "0 0 0 3px rgba(26,115,232,0.15)",
+            } : {}}
+          >
             <h4 style={{ margin: 0, marginBottom: 8 }}>{job.title}</h4>
 
             <div style={{ marginBottom: 12 }}>
-              <p className="font-bold" style={{ margin: "4px 0" }}>
+              <p className="font-bold" style={{ margin: "4px 0", display: "flex", alignItems: "center", gap: 6 }}>
                 {job.hospitalName}
+                <MapPinButton job={job} />
               </p>
               <p className="text-small text-muted" style={{ margin: "4px 0" }}>
                 {job.hospitalType} • {job.pincode}
