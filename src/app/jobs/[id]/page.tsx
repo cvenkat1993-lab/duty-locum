@@ -42,16 +42,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const docSnap = await adminDb.collection("jobs").doc(id).get();
 
-  if (!docSnap.exists) return { title: "Job Not Found | Doctor Jobs" };
+  if (!docSnap.exists) return { title: "Job Not Found | Duty Locum - Doctor Jobs" };
 
   const job = docSnap.data()!;
   return {
-    title: `${job.title} at ${job.hospitalName} | Doctor Jobs`,
+    title: `${job.title} at ${job.hospitalName} | Duty Locum - Doctor Jobs`,
     description: [
       `${job.workType || "Doctor"} position — ${job.title} at ${job.hospitalName}.`,
       job.department ? `Department: ${job.department}.` : "",
       job.payscale   ? `Salary: ${job.payscale}.`       : "",
-      "Apply now on Doctor Jobs.",
+      "Apply now on Duty Locum - Doctor Jobs.",
     ].filter(Boolean).join(" "),
     openGraph: {
       title: `${job.title} — ${job.hospitalName}`,

@@ -14,7 +14,7 @@ export default function SearchPage() {
 
   return (
     <main style={{ padding: 30 }}>
-      <h1>Find Doctor Jobs</h1>
+      <h1>Find Duty Locum - Doctor Jobs</h1>
 
       <input
         placeholder="Pincode"

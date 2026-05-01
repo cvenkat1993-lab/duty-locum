@@ -11,7 +11,7 @@ export function buildJobSchema(job: any) {
     "hiringOrganization": {
       "@type": "Organization",
       "name": job.hospitalName,
-      "sameAs": `https://doctorjobs.in/browse-jobs`,
+      "sameAs": `https://dutylocum.in/browse-jobs`,
     },
     "jobLocation": {
       "@type": "Place",

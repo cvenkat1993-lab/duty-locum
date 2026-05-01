@@ -17,6 +17,6 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
     ],
-    sitemap: "https://doctorjobs.in/sitemap.xml",
+    sitemap: "https://dutylocum.in/sitemap.xml",
   };
 }

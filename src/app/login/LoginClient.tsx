@@ -55,7 +55,7 @@ export default function LoginClient() {
             🏥
           </div>
 
-          <h1 style={{ marginBottom: 8 }}>Doctor Jobs</h1>
+          <h1 style={{ marginBottom: 8 }}>Duty Locum - Doctor Jobs</h1>
           <p className="text-muted" style={{ marginBottom: 32 }}>
             Sign in to post jobs or apply to opportunities
           </p>

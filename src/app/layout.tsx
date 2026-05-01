@@ -4,8 +4,8 @@ import GoogleMapsProvider from "@/components/GoogleMapsProvider";
 
 export const metadata: Metadata = {
   title: {
-    default: "Doctor Jobs — Find Doctor Jobs in India",
-    template: "%s | Doctor Jobs",
+    default: "Duty Locum - Doctor Jobs — Find Doctor Jobs in India",
+    template: "%s | Duty Locum - Doctor Jobs",
   },
   description:
     "India's dedicated platform for doctor job search. Find full-time, part-time, locum, and contract positions at hospitals and clinics. Hospitals can post jobs and hire directly.",
@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     "doctor jobs India",
     "medical jobs India",
     "hospital jobs",
+    "Duty Locum",
     "locum doctor",
     "MBBS jobs",
     "MD jobs",
@@ -22,8 +23,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_IN",
-    siteName: "Doctor Jobs",
-    title: "Doctor Jobs — Find Doctor Jobs in India",
+    siteName: "Duty Locum - Doctor Jobs",
+    title: "Duty Locum — Find Doctor Jobs in India",
     description:
       "India's dedicated platform for doctor job search. Find full-time, part-time, locum, and contract positions at hospitals and clinics across India.",
   },

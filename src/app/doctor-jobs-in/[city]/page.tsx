@@ -137,13 +137,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { city } = await params;
   const cityData = CITIES[city.toLowerCase()];
 
-  if (!cityData) return { title: "Doctor Jobs" };
+  if (!cityData) return { title: "Duty Locum - Doctor Jobs" };
 
   return {
-    title: `Doctor Jobs in ${cityData.name} | ${cityData.state} Medical Jobs`,
-    description: `Find doctor jobs in ${cityData.name}, ${cityData.state}. Browse full-time, part-time, locum, and contract positions at hospitals and clinics in ${cityData.name}. Apply directly — no placement fees.`,
+    title: `Duty Locum - Doctor Jobs in ${cityData.name} | ${cityData.state} Medical Jobs`,
+    description: `Find Duty Locum - Doctor Jobs in ${cityData.name}, ${cityData.state}. Browse full-time, part-time, locum, and contract positions at hospitals and clinics in ${cityData.name}. Apply directly — no placement fees.`,
     openGraph: {
-      title: `Doctor Jobs in ${cityData.name} — ${cityData.state}`,
+      title: `Duty Locum - Doctor Jobs in ${cityData.name} — ${cityData.state}`,
       description: `Browse medical job openings in ${cityData.name}. Hospitals, clinics, and nursing homes hiring doctors now.`,
     },
   };
@@ -197,7 +197,7 @@ export default async function CityJobsPage({ params }: Props) {
   const schema = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: `Doctor Jobs in ${cityData.name}`,
+    name: `Duty Locum - Doctor Jobs in ${cityData.name}`,
     description: `Medical job listings in ${cityData.name}, ${cityData.state}`,
     numberOfItems: cityJobs.length,
     itemListElement: cityJobs.slice(0, 10).map((job, index) => ({
@@ -276,7 +276,7 @@ export default async function CityJobsPage({ params }: Props) {
                 {cityData.description}
               </p>
               <p style={{ lineHeight: 1.7, color: "#444", marginTop: 12 }}>
-                Doctor Jobs lists full-time, part-time, locum, and contract positions
+                Duty Locum lists full-time, part-time, locum, and contract positions
                 at hospitals, clinics, and nursing homes in {cityData.name}. Doctors can
                 apply directly — no placement agencies, no fees. Hospitals post vacancies
                 and receive applications with complete candidate profiles including
@@ -380,11 +380,11 @@ export default async function CityJobsPage({ params }: Props) {
             {/* GEO content — what AI crawlers answer from */}
             <div className="card" style={{ marginTop: 32 }}>
               <h2 style={{ fontSize: 20, marginBottom: 16 }}>
-                About Doctor Jobs in {cityData.name}
+                About Duty Locum - Doctor Jobs in {cityData.name}
               </h2>
 
               <h3 style={{ fontSize: 16, marginBottom: 8 }}>
-                What types of doctor jobs are available in {cityData.name}?
+                What types of Duty Locum - Doctor Jobs are available in {cityData.name}?
               </h3>
               <p style={{ lineHeight: 1.7, color: "#444", marginBottom: 16 }}>
                 Hospitals and clinics in {cityData.name} hire doctors for full-time
@@ -396,10 +396,10 @@ export default async function CityJobsPage({ params }: Props) {
               </p>
 
               <h3 style={{ fontSize: 16, marginBottom: 8 }}>
-                How do I apply for doctor jobs in {cityData.name}?
+                How do I apply for Duty Locum - Doctor Jobs in {cityData.name}?
               </h3>
               <p style={{ lineHeight: 1.7, color: "#444", marginBottom: 16 }}>
-                Create a free account on Doctor Jobs, complete your doctor profile with
+                Create a free account on Duty Locum - Doctor Jobs, complete your doctor profile with
                 your education, specialty, and experience, then apply directly to any
                 listing in {cityData.name} with one click. There are no placement fees.
                 When a hospital accepts your application, their phone number and email
@@ -411,7 +411,7 @@ export default async function CityJobsPage({ params }: Props) {
               </h3>
               <p style={{ lineHeight: 1.7, color: "#444" }}>
                 Yes. Hospitals, clinics, nursing homes, and diagnostic centres in{" "}
-                {cityData.name} can post job openings directly on Doctor Jobs. Use the
+                {cityData.name} can post job openings directly on Duty Locum - Doctor Jobs. Use the
                 Post a Job or Post Locum Duty options. Your hospital location and pincode
                 are auto-detected. Applications arrive with complete doctor profiles
                 including qualifications and current institution.

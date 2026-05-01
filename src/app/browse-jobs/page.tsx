@@ -8,11 +8,11 @@ import BrowseJobsClient from "./BrowseJobsClient";
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: "Browse Doctor Jobs in India | Doctor Jobs",
+  title: "Browse Doctor Jobs in India | Duty Locum",
   description:
     "Find full-time, part-time, locum, and contract doctor jobs at hospitals and clinics across India. Filter by specialty, department, and work type. Apply directly.",
   openGraph: {
-    title: "Browse Doctor Jobs in India",
+    title: "Browse Duty Locum - Doctor Jobs in India",
     description:
       "Search hundreds of doctor job openings across Indian hospitals and clinics. Filter by specialty, location, and work type.",
   },
@@ -55,7 +55,7 @@ export default async function BrowseJobsPage() {
     <>
       {/* Static crawlable content — seen by search engines, hidden from users */}
       <div style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", opacity: 0 }} aria-hidden="true">
-        <h1>Browse Doctor Jobs in India</h1>
+        <h1>Browse Duty Locum - Doctor Jobs in India</h1>
         <p>{jobs.length} doctor job openings available across hospitals and clinics in India.</p>
         <ul>
           {jobs.slice(0, 100).map((job: any) => (

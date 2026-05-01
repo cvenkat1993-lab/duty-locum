@@ -3,13 +3,13 @@ import { Metadata } from "next";
 import Header from "@/components/Header";
 
 export const metadata: Metadata = {
-  title: "How It Works | Doctor Jobs — Apply for Medical Jobs in India",
+  title: "How It Works | Duty Locum - Doctor Jobs — Apply for Medical Jobs in India",
   description:
-    "Learn how Doctor Jobs works for doctors and hospitals. Create a profile, search for jobs by location or specialty, apply with one click, and get hired. Free for doctors.",
+    "Learn how Duty Locum - Doctor Jobs works for doctors and hospitals. Create a profile, search for jobs by location or specialty, apply with one click, and get hired. Free for doctors.",
   openGraph: {
-    title: "How Doctor Jobs Works — For Doctors and Hospitals",
+    title: "How Duty Locum - Doctor Jobs Works — For Doctors and Hospitals",
     description:
-      "Step-by-step guide to finding doctor jobs or posting medical vacancies in India. Simple, fast, and free to use.",
+      "Step-by-step guide to finding Duty Locum or posting medical vacancies in India. Simple, fast, and free to use.",
   },
 };
 
@@ -22,7 +22,7 @@ export default function HowItWorksPage() {
         <div className="card">
           <h1 style={{ marginBottom: 8 }}>How It Works</h1>
           <p style={{ color: "#666", marginBottom: 32, fontSize: 16 }}>
-            Doctor Jobs connects medical professionals with hospitals and clinics across India.
+            Duty Locum - Doctor Jobs connects medical professionals with hospitals and clinics across India.
             Here is how the platform works for both doctors and recruiters.
           </p>
 
@@ -39,7 +39,7 @@ export default function HowItWorksPage() {
 
           <h3 style={{ marginTop: 24, marginBottom: 12, fontSize: 18 }}>Step 2: Search for Jobs</h3>
           <p style={{ lineHeight: 1.6, color: "#333" }}>
-            Use the location-based search on the home page to find doctor jobs near you, or browse
+            Use the location-based search on the home page to find Duty Locum - Doctor Jobs near you, or browse
             all listings on the Browse Jobs page. Filter by job title, department or specialty, and
             work type (full-time, part-time, locum, contract, visiting). Jobs are listed from
             hospitals, clinics, nursing homes, and diagnostic centres across India.

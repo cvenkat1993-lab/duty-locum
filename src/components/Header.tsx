@@ -98,7 +98,7 @@ export default function Header() {
             {/* Logo */}
             <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none", color: "var(--foreground)" }}>
               <span style={{ fontSize: 28 }}>🏥</span>
-              <span style={{ fontWeight: 700, fontSize: 18 }} className="hide-mobile">Doctor Jobs</span>
+              <span style={{ fontWeight: 700, fontSize: 18 }} className="hide-mobile">Duty Locum - Doctor Jobs</span>
             </Link>
 
             {/* Desktop Navigation */}

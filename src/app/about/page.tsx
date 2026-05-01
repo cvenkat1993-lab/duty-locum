@@ -7,11 +7,11 @@ import { Metadata } from "next";
 import Header from "@/components/Header";
 
 export const metadata: Metadata = {
-  title: "About Us | Doctor Jobs — Connecting Doctors with Hospitals in India",
+  title: "About Us | Duty Locum - Doctor Jobs — Connecting Doctors with Hospitals in India",
   description:
-    "Doctor Jobs is India's dedicated medical recruitment platform connecting doctors with hospitals, clinics, and nursing homes. Free for doctors. No placement fees. Apply directly.",
+    "Duty Locum - Doctor Jobs is India's dedicated medical recruitment platform connecting doctors with hospitals, clinics, and nursing homes. Free for doctors. No placement fees. Apply directly.",
   openGraph: {
-    title: "About Doctor Jobs — India's Medical Recruitment Platform",
+    title: "About Duty Locum Doctor Jobs - Doctor Jobs — India's Medical Recruitment Platform",
     description:
       "We connect doctors with hospitals across India. Find full-time, part-time, and locum opportunities or post jobs for your healthcare institution.",
   },
@@ -24,15 +24,15 @@ export default function AboutPage() {
 
       <div className="container" style={{ paddingTop: 40, paddingBottom: 60, maxWidth: 900 }}>
         <div className="card">
-          <h1 style={{ marginBottom: 8 }}>About Doctor Jobs</h1>
+          <h1 style={{ marginBottom: 8 }}>About Duty Locum - Doctor Jobs</h1>
           <p style={{ color: "#666", fontSize: 16, marginBottom: 32 }}>
             India's dedicated platform for medical recruitment — connecting doctors directly
             with hospitals, clinics, and nursing homes across India.
           </p>
 
-          <h2 style={{ marginTop: 32, marginBottom: 16 }}>What is Doctor Jobs?</h2>
+          <h2 style={{ marginTop: 32, marginBottom: 16 }}>What is Duty Locum - Doctor Jobs?</h2>
           <p style={{ lineHeight: 1.7, color: "#333" }}>
-            Doctor Jobs is a free online platform that connects medical professionals with
+            Duty Locum - Doctor Jobs is a free online platform that connects medical professionals with
             healthcare institutions across India. Doctors can search and apply for full-time,
             part-time, locum, contract, and visiting positions at hospitals, clinics, nursing
             homes, and diagnostic centres. Hospitals and recruiters can post vacancies and
@@ -49,16 +49,16 @@ export default function AboutPage() {
           <p style={{ lineHeight: 1.7, color: "#333" }}>
             Our mission is to make medical hiring in India simple, transparent, and direct.
             We remove placement fees, cut out intermediaries, and give both doctors and
-            hospitals a straightforward way to connect. Every job listing on Doctor Jobs
+            hospitals a straightforward way to connect. Every job listing on Duty Locum
             includes the hospital name, department, work type, and location — so doctors
             can make informed decisions before they apply.
           </p>
 
-          <h2 style={{ marginTop: 32, marginBottom: 16 }}>Who Uses Doctor Jobs?</h2>
+          <h2 style={{ marginTop: 32, marginBottom: 16 }}>Who Uses Duty Locum - Doctor Jobs?</h2>
 
           <h3 style={{ fontSize: 17, marginBottom: 10, marginTop: 20 }}>Doctors and Medical Professionals</h3>
           <p style={{ lineHeight: 1.7, color: "#333" }}>
-            Doctors at every stage of their career use Doctor Jobs to find opportunities.
+            Doctors at every stage of their career use Duty Locum to find opportunities.
             Fresh MBBS graduates looking for house surgeon or internship positions, junior
             residents seeking their first independent posting, postgraduate students searching
             for senior resident or SR roles, and experienced consultants or specialists looking
@@ -73,7 +73,7 @@ export default function AboutPage() {
 
           <h3 style={{ fontSize: 17, marginBottom: 10, marginTop: 20 }}>Hospitals, Clinics, and Recruiters</h3>
           <p style={{ lineHeight: 1.7, color: "#333" }}>
-            Hospitals, clinics, nursing homes, and diagnostic centres use Doctor Jobs to post
+            Hospitals, clinics, nursing homes, and diagnostic centres use Duty Locum - Doctor Jobs to post
             vacancies and find doctors quickly. Recruiters post a job with the role title,
             department, work type, payscale, and required date. The hospital location and
             pincode are auto-detected from Google Places. Applications arrive with the
@@ -81,7 +81,7 @@ export default function AboutPage() {
             and experience — so recruiters can shortlist without any back-and-forth.
           </p>
 
-          <h2 style={{ marginTop: 32, marginBottom: 16 }}>What Makes Doctor Jobs Different?</h2>
+          <h2 style={{ marginTop: 32, marginBottom: 16 }}>What Makes Duty Locum - Doctor Jobs Different?</h2>
           <ul style={{ lineHeight: 1.9, color: "#333", paddingLeft: 20 }}>
             <li>
               <strong>No placement fees.</strong> Doctors apply for free. Hospitals post for free.
@@ -113,7 +113,7 @@ export default function AboutPage() {
 
           <h2 style={{ marginTop: 32, marginBottom: 16 }}>Cities and Coverage</h2>
           <p style={{ lineHeight: 1.7, color: "#333" }}>
-            Doctor Jobs lists medical positions across India. Current job listings are available
+            Duty Locum lists medical positions across India. Current job listings are available
             in Chennai, Mumbai, Bangalore, Hyderabad, Delhi NCR, Pune, Kolkata, Ahmedabad,
             Coimbatore, Kochi, and many other cities and towns. The platform is available
             nationwide — any hospital in any city can post a job, and any doctor in India

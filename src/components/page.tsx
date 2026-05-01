@@ -3,14 +3,12 @@
 import { useEffect, useState } from "react";
 import SearchBar from "@/components/SearchBar";
 import HomeLoginBanner from "@/components/HomeLoginBanner";
-import PostJobCTA from "@/components/PostJobCTA";
 import MapView from "@/components/MapView";
 import JobListPanel from "@/components/JobListPanel";
 import { getDistanceKm } from "@/lib/geo";
 import { Job } from "@/types/job";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, fetchJobs, applyForJob, db } from "@/lib/firebase";
-import ProfileMenu from "@/components/ProfileMenu";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 
@@ -158,7 +156,7 @@ export default function HomePage() {
       {/* Main Content */}
       <div className="container" style={{ flex: 1, paddingTop: "20px", paddingBottom: "20px" }}>
         <div style={{ marginBottom: "24px" }}>
-          <h1 style={{ marginBottom: "8px" }}>Find Doctor Jobs Near You</h1>
+          <h1 style={{ marginBottom: "8px" }}>Find Duty Locum - Doctor Jobs Near You</h1>
           <p className="text-muted">Search by location or hospital name</p>
         </div>
 
