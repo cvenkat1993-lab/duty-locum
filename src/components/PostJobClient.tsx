@@ -26,6 +26,7 @@ export default function PostJobClient() {
     remarks: "",
     requiredDate: "",
     hospGeo: { lat: 0, lng: 0 },
+    postedByLabel: "",
   });
 
   // Load user profile to get contact details
@@ -40,6 +41,7 @@ export default function PostJobClient() {
           ...prev,
           contact: userData.email || user.email || "",
           contactNo: userData.phoneNumber || "",
+          postedByLabel: userData.postedByLabel || "Doctor",
         }));
       }
     };

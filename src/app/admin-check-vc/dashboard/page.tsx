@@ -112,6 +112,9 @@ export default function AdminDashboard() {
       "Phone": user.phoneNumber || "N/A",
       "Job Title": user.currentJobTitle || "N/A",
       "Institution": user.currentInstitution || "N/A",
+      "User Type": user.userType || "Unknown",
+      "Role": user.nonDoctorRole || "N/A",
+      "Profile Complete": user.profileComplete === true ? "Yes" : user.userType ? "No" : "Registered Only",
       "Department": user.department || "N/A",
       "Experience": user.experience || "N/A",
       "Updated At": user.updatedAt?.toDate?.()?.toLocaleString() || "N/A",
@@ -304,10 +307,12 @@ export default function AdminDashboard() {
                   <tr style={{ borderBottom: "2px solid var(--border)" }}>
                     <th style={{ padding: 12, textAlign: "left" }}>Name</th>
                     <th style={{ padding: 12, textAlign: "left" }}>Email</th>
+                    <th style={{ padding: 12, textAlign: "left" }}>Type</th>
                     <th style={{ padding: 12, textAlign: "left" }}>Phone</th>
                     <th style={{ padding: 12, textAlign: "left" }}>Job Title</th>
                     <th style={{ padding: 12, textAlign: "left" }}>Institution</th>
                     <th style={{ padding: 12, textAlign: "left" }}>Department</th>
+                    <th style={{ padding: 12, textAlign: "left" }}>Profile</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -315,10 +320,28 @@ export default function AdminDashboard() {
                     <tr key={user.id} style={{ borderBottom: "1px solid var(--border)" }}>
                       <td style={{ padding: 12 }}>{user.name || "N/A"}</td>
                       <td style={{ padding: 12, fontSize: 13 }}>{user.email || "N/A"}</td>
+                      <td style={{ padding: 12 }}>
+                        <span style={{
+                          fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 12,
+                          background: user.userType === "doctor" ? "#e8f4fd" : user.userType === "non-doctor" ? "#f3e8fd" : "#f5f5f5",
+                          color: user.userType === "doctor" ? "#1565c0" : user.userType === "non-doctor" ? "#6a1b9a" : "#999",
+                        }}>
+                          {user.userType === "doctor" ? "Doctor" : user.userType === "non-doctor" ? (user.nonDoctorRole || "Non-Doctor") : "Unknown"}
+                        </span>
+                      </td>
                       <td style={{ padding: 12 }}>{user.phoneNumber || "N/A"}</td>
                       <td style={{ padding: 12 }}>{user.currentJobTitle || "N/A"}</td>
                       <td style={{ padding: 12, fontSize: 13 }}>{user.currentInstitution || "N/A"}</td>
                       <td style={{ padding: 12 }}>{user.department || "N/A"}</td>
+                      <td style={{ padding: 12 }}>
+                        {user.profileComplete === true ? (
+                          <span style={{ color: "#2e7d32", fontWeight: 600, fontSize: 12 }}>✓ Complete</span>
+                        ) : user.userType ? (
+                          <span style={{ color: "#f57c00", fontWeight: 600, fontSize: 12 }}>⚠ Incomplete</span>
+                        ) : (
+                          <span style={{ color: "#999", fontSize: 12 }}>— Registered</span>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

@@ -10,6 +10,7 @@ import {
 import { Job } from "@/types/job";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
+import PostedByBadge from "@/components/PostedByBadge";
 
 interface AppliedJobWithDetails {
   application: Application;
@@ -94,6 +95,9 @@ export default function AppliedJobsClient() {
                     <p className="text-muted" style={{ margin: "4px 0" }}>
                       {job.hospitalName} • {job.hospitalType}
                     </p>
+                    <div style={{ marginTop: 6 }}>
+                      <PostedByBadge label={(job as any).postedByLabel || "Doctor"} />
+                    </div>
                   </div>
                   <span className={`badge badge-${application.status}`}>
                     {application.status.toUpperCase()}

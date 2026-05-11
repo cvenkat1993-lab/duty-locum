@@ -1,26 +1,41 @@
-import { Job } from "@/types/job";
+import { Timestamp } from "firebase/firestore";
 
-export const jobs: Job[] = [
-  {
-    id: "job1",
-    title: "MBBS Doctor",
-    hospitalName: "Apollo Hospital",
-    hospitalType: "Hospital",
-    pincode: "560001",
+export interface Job {
+  /** Firestore document ID */
+  id: string;
 
-    department: "General Medicine",
-    workType: "Full-time",
+  /** Job basics */
+  title: string;
+  department?: string;
+  workType: "Full-time" | "Part-time" | "Contract" | "Locum";
 
-    payscale: "₹80,000 – ₹1,20,000",
-    contact: "hr@apollohospitals.com",
-    contactNo: "9876543210",
+  /** Hospital details */
+  hospitalName: string;
+  hospitalType: "Hospital" | "Clinic" | "Nursing Home" | "Diagnostic Center" | "Other";
+  pincode: string;
 
-    remarks: "Immediate requirement",
-    requiredDate: undefined,
+  /** Geo location (from Google Places) */
+  hospGeo?: {
+    lat: number;
+    lng: number;
+  };
 
-    hospGeo: {
-      lat: 12.9716,
-      lng: 77.5946,
-    },
-  },
-];
+  /** Hiring & contact */
+  payscale?: string;
+  contact?: string;      // email
+  contactNo: string;
+
+  /** Additional info */
+  remarks?: string;
+
+  /** When doctor is required */
+  requiredDate?: string | Timestamp;
+
+  /** Who posted */
+  postedByLabel?: string; // 'Doctor' | 'HR' | 'Admin' | 'Recruiter' | 'Agency' etc
+
+  /** Audit */
+  recruiterId?: string;
+  recruiterEmail?: string;
+  createdAt?: Timestamp;
+}

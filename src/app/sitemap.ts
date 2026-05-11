@@ -27,6 +27,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     { url: "https://dutylocum.in", changeFrequency: "daily", priority: 1.0 },
     { url: "https://dutylocum.in/browse-jobs", changeFrequency: "daily", priority: 0.9 },
+    { url: "https://dutylocum.in/roster", changeFrequency: "monthly", priority: 0.7 },
     ...cityUrls,
     { url: "https://dutylocum.in/about", changeFrequency: "monthly", priority: 0.6 },
     { url: "https://dutylocum.in/how-it-works", changeFrequency: "monthly", priority: 0.6 },

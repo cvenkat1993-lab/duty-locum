@@ -19,6 +19,7 @@ import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Link from "next/link";
 import MapPinButton from "@/components/MapPinButton";
+import PostedByBadge from "@/components/PostedByBadge";
 
 // ── City configuration ──────────────────────────────────────
 // Add more cities here as your platform grows.
@@ -333,6 +334,9 @@ export default async function CityJobsPage({ params }: Props) {
                               {job.hospitalName}
                               <MapPinButton job={job} />
                             </p>
+                            <div style={{ marginTop: 4 }}>
+                              <PostedByBadge label={job.postedByLabel || "Doctor"} />
+                            </div>
                             <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 16px", fontSize: 13, color: "#666" }}>
                               {job.department && <span>🔬 {job.department}</span>}
                               <span>📍 {job.pincode}</span>

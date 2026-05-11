@@ -149,6 +149,10 @@ export default function HomePage() {
     }
 
     const userDoc = await getDoc(doc(db, "users", user.uid));
+    if (userDoc.exists() && userDoc.data().userType === "non-doctor") {
+      alert("Only doctors can apply for jobs. Non-doctor accounts are for posting jobs only.");
+      return;
+    }
     if (!userDoc.exists()) {
       if (confirm("Please complete your profile before applying. Go to profile now?")) {
         router.push("/profile");

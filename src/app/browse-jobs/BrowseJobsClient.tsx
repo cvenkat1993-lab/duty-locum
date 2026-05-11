@@ -1,6 +1,7 @@
 "use client";
 
 import MapPinButton from "@/components/MapPinButton";
+import PostedByBadge from "@/components/PostedByBadge";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -10,6 +11,7 @@ import { Job } from "@/types/job";
 import { useAuth } from "@/hooks/useAuth";
 import Header from "@/components/Header";
 import { signInWithPopup } from "firebase/auth";
+import { saveUserOnLogin } from "@/lib/saveUserOnLogin";
 import { auth, provider } from "@/lib/firebase";
 
 export default function BrowseJobsClient({ initialJobs }: { initialJobs: Job[] }) {
@@ -33,6 +35,7 @@ export default function BrowseJobsClient({ initialJobs }: { initialJobs: Job[] }
   const [selectedJobTitles, setSelectedJobTitles] = useState<string[]>([]);
   const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
   const [selectedWorkTypes, setSelectedWorkTypes] = useState<string[]>([]);
+  const [selectedPostedBy, setSelectedPostedBy] = useState<string[]>([]);
 
   // Detect mobile
   useEffect(() => {
@@ -63,7 +66,7 @@ export default function BrowseJobsClient({ initialJobs }: { initialJobs: Job[] }
   // Apply filters when selections change
   useEffect(() => {
     applyFilters();
-  }, [selectedJobTitles, selectedDepartments, selectedWorkTypes, allJobs]);
+  }, [selectedJobTitles, selectedDepartments, selectedWorkTypes, selectedPostedBy, allJobs]);
 
   const loadAppliedJobs = async (userId: string) => {
     try {
@@ -91,6 +94,14 @@ export default function BrowseJobsClient({ initialJobs }: { initialJobs: Job[] }
       filtered = filtered.filter(job => selectedWorkTypes.includes(job.workType));
     }
 
+    if (selectedPostedBy.length > 0) {
+      filtered = filtered.filter(job => {
+        const label = (job as any).postedByLabel || "Doctor";
+        const group = label === "Doctor" ? "Doctor" : "Non-Doctor";
+        return selectedPostedBy.includes(group);
+      });
+    }
+
     setFilteredJobs(filtered);
     setCurrentPage(1);
   };
@@ -113,19 +124,35 @@ export default function BrowseJobsClient({ initialJobs }: { initialJobs: Job[] }
     );
   };
 
+  const togglePostedBy = (type: string) => {
+    setSelectedPostedBy(prev => prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]);
+  };
+
   const clearAllFilters = () => {
     setSelectedJobTitles([]);
     setSelectedDepartments([]);
     setSelectedWorkTypes([]);
+    setSelectedPostedBy([]);
   };
 
-  const hasActiveFilters = selectedJobTitles.length > 0 || selectedDepartments.length > 0 || selectedWorkTypes.length > 0;
+  const hasActiveFilters = selectedJobTitles.length > 0 || selectedDepartments.length > 0 || selectedWorkTypes.length > 0 || selectedPostedBy.length > 0;
 
   const handleApply = async (job: Job) => {
     if (!user) {
       alert("Please login to apply");
       return;
     }
+
+    // Check userType stored in Firestore
+    try {
+      const { db } = await import("@/lib/firebase");
+      const { getDoc: _getDoc, doc: _doc } = await import("firebase/firestore");
+      const snap = await _getDoc(_doc(db, "users", user.uid));
+      if (snap.exists() && snap.data().userType === "non-doctor") {
+        alert("Only doctors can apply for jobs. Non-doctor accounts are for posting jobs only.");
+        return;
+      }
+    } catch (_) {}
 
     if (job.recruiterId === user.uid) {
       alert("You cannot apply to your own job posting");
@@ -164,7 +191,8 @@ export default function BrowseJobsClient({ initialJobs }: { initialJobs: Job[] }
 
   const handleLoginAndApply = async () => {
     try {
-      await signInWithPopup(auth, provider);
+      const _result = await signInWithPopup(auth, provider);
+      await saveUserOnLogin(_result.user);
     } catch (error: any) {
       if (
         error.code === 'auth/cancelled-popup-request' ||
@@ -324,6 +352,18 @@ export default function BrowseJobsClient({ initialJobs }: { initialJobs: Job[] }
                 selectedItems={selectedWorkTypes}
                 onToggle={toggleWorkType}
               />
+
+              {/* Posted By Filter */}
+              <div style={{ marginBottom: 20 }}>
+                <h4 style={{ marginBottom: 12, fontSize: 14, fontWeight: 600 }}>Posted By</h4>
+                {["Doctor", "Non-Doctor"].map(type => (
+                  <label key={type} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, cursor: "pointer", fontSize: 14 }}>
+                    <input type="checkbox" checked={selectedPostedBy.includes(type)}
+                      onChange={() => togglePostedBy(type)} style={{ width: 16, height: 16 }} />
+                    {type === "Doctor" ? "🩺 Doctor" : "👤 Non-Doctor (HR / Admin / Recruiter / Agency)"}
+                  </label>
+                ))}
+              </div>
 
               {isMobile && (
                 <button
@@ -517,6 +557,9 @@ function JobCard({
               {job.hospitalName}
               <MapPinButton job={job} />
             </p>
+            <div style={{ marginTop: 4 }}>
+              <PostedByBadge label={(job as any).postedByLabel || "Doctor"} />
+            </div>
           </div>
           {job.workType && (
             <span
@@ -632,6 +675,9 @@ function JobCard({
             {job.hospitalName}
             <MapPinButton job={job} />
           </p>
+          <div style={{ marginTop: 4 }}>
+            <PostedByBadge label={(job as any).postedByLabel || "Doctor"} />
+          </div>
 
           {/* Metadata in one line */}
           <div style={{

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { auth, provider } from "@/lib/firebase";
 import { signInWithPopup } from "firebase/auth";
+import { saveUserOnLogin } from "@/lib/saveUserOnLogin";
 import Header from "@/components/Header";
 
 export default function LoginClient() {
@@ -15,7 +16,7 @@ export default function LoginClient() {
     setIsLoading(true);
     try {
       const result = await signInWithPopup(auth, provider);
-      console.log("Login successful:", result.user.email);
+      await saveUserOnLogin(result.user);
       router.push("/");
     } catch (error: any) {
       if (

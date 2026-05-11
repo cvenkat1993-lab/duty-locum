@@ -5,6 +5,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import MapPinButton from "@/components/MapPinButton";
+import PostedByBadge from "@/components/PostedByBadge";
 import JobDetailClient from "@/components/JobDetailClient";
 
 export const dynamic = 'force-dynamic';
@@ -94,6 +95,10 @@ export default async function JobDetailPage({ params }: Props) {
           {job.department   && <span>🔬 {job.department}</span>}
           {job.pincode      && <span>📍 Pincode: {job.pincode}</span>}
           {job.payscale     && <span style={{ fontWeight: 600, color: "#333" }}>💰 {job.payscale}</span>}
+        </div>
+
+        <div style={{ marginBottom: 16 }}>
+          <PostedByBadge label={job.postedByLabel || "Doctor"} size="md" />
         </div>
 
         {job.remarks && (

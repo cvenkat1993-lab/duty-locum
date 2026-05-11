@@ -1,10 +1,12 @@
 "use client";
 
 import MapPinButton from "@/components/MapPinButton";
+import PostedByBadge from "@/components/PostedByBadge";
 
 import { Job } from "@/types/job";
 import { useRouter } from "next/navigation";
 import { signInWithPopup } from "firebase/auth";
+import { saveUserOnLogin } from "@/lib/saveUserOnLogin";
 import { auth, provider } from "@/lib/firebase";
 import { useState } from "react";
 
@@ -44,7 +46,8 @@ export default function JobListPanel({
     setIsLoggingIn(true);
     
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      await saveUserOnLogin(result.user);
       // User is now logged in, the parent component will re-render
       // and show the "Express Interest" button instead
     } catch (error: any) {
@@ -105,6 +108,9 @@ export default function JobListPanel({
                 {job.hospitalName}
                 <MapPinButton job={job} />
               </p>
+              <div style={{ marginTop: 4 }}>
+                <PostedByBadge label={(job as any).postedByLabel || "Doctor"} />
+              </div>
               <p className="text-small text-muted" style={{ margin: "4px 0" }}>
                 {job.hospitalType} • {job.pincode}
               </p>

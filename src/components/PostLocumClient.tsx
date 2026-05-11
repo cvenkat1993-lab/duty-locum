@@ -25,6 +25,7 @@ export default function PostLocumClient() {
     remarks: "",
     requiredDate: "",
     hospGeo: { lat: 0, lng: 0 },
+    postedByLabel: "",
   });
 
   // Load user profile to get contact details
@@ -39,6 +40,7 @@ export default function PostLocumClient() {
           ...prev,
           contact: userData.email || user.email || "",
           contactNo: userData.phoneNumber || "",
+          postedByLabel: userData.postedByLabel || "Doctor",
         }));
       }
     };
