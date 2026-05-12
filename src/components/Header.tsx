@@ -3,8 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
-import { signOut } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { signOut, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { auth, db } from "@/lib/firebase";
+import { saveUserOnLogin } from "@/lib/saveUserOnLogin";
 import Link from "next/link";
 
 export default function Header() {
@@ -61,6 +62,25 @@ export default function Header() {
     await signOut(auth);
     setIsMobileMenuOpen(false);
     router.push("/");
+  };
+
+  const handleLogin = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      await saveUserOnLogin(result.user);
+      setIsMobileMenuOpen(false);
+    } catch (error: any) {
+      if (
+        error.code === "auth/cancelled-popup-request" ||
+        error.code === "auth/popup-closed-by-user"
+      ) return;
+      if (error.code === "auth/popup-blocked") {
+        alert("Pop-up blocked. Please allow pop-ups for this site.");
+        return;
+      }
+      console.error("Login error:", error.code, error.message);
+    }
   };
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
@@ -167,7 +187,7 @@ export default function Header() {
                     <div style={dropdownBoxStyle}>
                       <Link href="/post-job" onClick={() => setIsPostMenuOpen(false)} style={dropdownLinkStyle()}>
                         <span style={{ fontSize: 16 }}>💼</span>
-                        <div><div style={{ fontWeight: 500 }}>Post Full time</div><div style={{ fontSize: 11, color: "var(--muted)" }}>Permanent &amp; contract roles</div></div>
+                        <div><div style={{ fontWeight: 500 }}>Post full time</div><div style={{ fontSize: 11, color: "var(--muted)" }}>Permanent &amp; contract roles</div></div>
                       </Link>
                       <Link href="/post-locum" onClick={() => setIsPostMenuOpen(false)} style={dropdownLinkStyle(true)}>
                         <span style={{ fontSize: 16 }}>🩺</span>
@@ -232,7 +252,7 @@ export default function Header() {
                       )}
                     </>
                   ) : (
-                    <Link href="/login" className="btn btn-primary">Login</Link>
+                    <button onClick={handleLogin} className="btn btn-primary">Login</button>
                   )}
                 </div>
               </nav>
@@ -309,7 +329,7 @@ export default function Header() {
                   }}>🚪 Logout</button>
                 </>
               ) : (
-                <Link href="/login" onClick={closeMobileMenu} style={mobileLinkStyle}>🔐 Login</Link>
+                <button onClick={handleLogin} style={{...mobileLinkStyle, background:"none", border:"none", cursor:"pointer", width:"100%", textAlign:"left"}}>🔐 Login</button>
               )}
 
               {/* Post subsection */}
@@ -324,8 +344,8 @@ export default function Header() {
               </button>
               {isMobilePostOpen && (
                 <>
-                  <Link href="/post-job" onClick={closeMobileMenu} style={mobileSubLinkStyle}>💼 Full time</Link>
-                  <Link href="/post-locum" onClick={closeMobileMenu} style={mobileSubLinkStyle}>🩺 Locum</Link>
+                  <Link href="/post-job" onClick={closeMobileMenu} style={mobileSubLinkStyle}>💼 Post full time</Link>
+                  <Link href="/post-locum" onClick={closeMobileMenu} style={mobileSubLinkStyle}>🩺 Post Locum</Link>
                 </>
               )}
 
