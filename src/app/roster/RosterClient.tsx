@@ -47,7 +47,7 @@ export default function RosterClient() {
   const [user, setUser] = useState<any>(null);
   const [profileComplete, setProfileComplete] = useState(false);
 
-  const [tab, setTab] = useState<"settings"|"doctors"|"leaves"|"roster"|"swaps">("roster");
+  const [tab, setTab] = useState<"settings"|"doctors"|"leaves"|"roster"|"swaps">("settings");
   const [shiftTypes, setShiftTypes] = useState<Record<string, ShiftType>>({ ...DEFAULT_SHIFTS });
   const [defaults, setDefaults] = useState({ minShifts:15, maxShifts:22, minHours:120, maxHours:200, leavesPerMonth:4, restHours:10 });
   const [shiftCountLimits, setShiftCountLimits] = useState<Record<string,number|null>>({ M:null,E:null,N:null,F:null });
@@ -118,27 +118,64 @@ export default function RosterClient() {
     const newRoster:Roster={};
     const statsMap:Record<number,{total:number;hours:number;bySType:Record<string,number>}>=Object.fromEntries(doctors.map(d=>[d.id,{total:0,hours:0,bySType:{M:0,E:0,N:0,F:0}}]));
     const days=daysInMonth(currentYear,currentMonth);
+    // Helper: get date string offset by N days
+    const offsetDate=(dateStr:string,days:number)=>{
+      const d=new Date(dateStr); d.setDate(d.getDate()+days); return d.toISOString().split("T")[0];
+    };
+
     const canAssign=(docId:number,dateStr:string,shift:string)=>{
       if(isOnLeave(docId,dateStr))return false;
       const day=newRoster[dateStr];
+      // Only one shift per day per doctor
       if(day&&SHIFT_ORDER.some(s=>day[s]?.includes(docId)))return false;
       const doc=docById(docId)!; const st=statsMap[docId];
       if(st.total>=(doc.maxShifts??defaults.maxShifts))return false;
       if(st.hours+shiftHours(shift)>(doc.maxHours??defaults.maxHours))return false;
       const lim=shiftCountLimits[shift]; if(lim!==null&&st.bySType[shift]>=lim)return false;
+
+      // Rest constraint: if doctor had Full-Day yesterday → rest today
+      const yesterday=offsetDate(dateStr,-1);
+      const prevDay=newRoster[yesterday];
+      if(prevDay&&prevDay["F"]?.includes(docId))return false;
+
+      // Rest constraint: if doctor had Night shift yesterday → no Morning today
+      if(prevDay&&prevDay["N"]?.includes(docId)&&shift==="M")return false;
+
+      // Rest constraint: if doctor had Night shift yesterday → no Full-Day today
+      if(prevDay&&prevDay["N"]?.includes(docId)&&shift==="F")return false;
+
       return true;
     };
-    const burden=(id:number)=>{const s=statsMap[id];return s.total+(s.bySType.N||0)*1.5+(s.bySType.F||0)*1.2;};
+    // Round-robin pointer per shift type — each shift slot rotates independently
+    const rrPointer:Record<string,number> = {M:0, E:0, N:0, F:0};
+
     for(let d=1;d<=days;d++){
       const dateStr=fmtDate(currentYear,currentMonth,d);
       newRoster[dateStr]={M:[],E:[],N:[],F:[]};
+
+      // For each shift, assign exactly one doctor using round-robin.
+      // Start from the current pointer, walk the doctor list until we
+      // find someone eligible, then advance the pointer.
       SHIFT_ORDER.forEach(shift=>{
-        const eligible=doctors.filter(doc=>canAssign(doc.id,dateStr,shift)).sort((a,b)=>burden(a.id)-burden(b.id));
-        const needed=Math.min(eligible.length,Math.max(1,Math.ceil(doctors.length/SHIFT_ORDER.length/days*1.1)));
-        eligible.slice(0,needed).forEach(doc=>{
-          newRoster[dateStr][shift].push(doc.id);
-          statsMap[doc.id].total++;statsMap[doc.id].hours+=shiftHours(shift);statsMap[doc.id].bySType[shift]++;
-        });
+        const n = doctors.length;
+        let assigned = false;
+        // Try each doctor once starting from the current pointer
+        for(let attempt=0; attempt<n; attempt++){
+          const idx = (rrPointer[shift] + attempt) % n;
+          const doc = doctors[idx];
+          if(canAssign(doc.id, dateStr, shift)){
+            newRoster[dateStr][shift].push(doc.id);
+            statsMap[doc.id].total++;
+            statsMap[doc.id].hours += shiftHours(shift);
+            statsMap[doc.id].bySType[shift]++;
+            // Advance pointer past this doctor for next assignment
+            rrPointer[shift] = (idx + 1) % n;
+            assigned = true;
+            break;
+          }
+        }
+        // If no one was eligible (all on leave / all at max), leave slot empty
+        if(!assigned) rrPointer[shift] = (rrPointer[shift] + 1) % n;
       });
     }
     setRoster(newRoster);showToast("Roster generated ✓");
@@ -210,11 +247,11 @@ export default function RosterClient() {
   const pendingSwaps=swaps.filter(s=>s.status==="pending").length;
 
   const navItems=[
-    {key:"roster",  label:"📅 Roster"},
+    {key:"settings",label:"⚙️ Settings"},
     {key:"doctors", label:"👥 Doctors"},
     {key:"leaves",  label:"🏥 Leaves", badge:pendingLeaves},
     {key:"swaps",   label:"🔄 Swaps",  badge:pendingSwaps},
-    {key:"settings",label:"⚙️ Settings"},
+    {key:"roster",  label:"📅 Roster"},
   ];
 
   const SectionTitle=({children}:{children:React.ReactNode})=>(
@@ -578,12 +615,12 @@ export default function RosterClient() {
                       <div className="form-group" style={{marginBottom:0}}><label className="form-label">To</label><input type="date" value={lTo} onChange={e=>setLTo(e.target.value)}/></div>
                       <div className="form-group" style={{marginBottom:0}}><label className="form-label">Type</label><select value={lType} onChange={e=>setLType(e.target.value)}>{LEAVE_TYPES.map(t=><option key={t}>{t}</option>)}</select></div>
                     </div>
-                    <button onClick={()=>{if(!lFrom||!lTo){showToast("Pick dates","err");return;}if(lFrom>lTo){showToast("From must be before To","err");return;}setLeaves(p=>[...p,{id:Date.now(),docId:lDoc,from:lFrom,to:lTo,type:lType,status:"pending"}]);showToast("Leave submitted ✓");}} className="btn btn-primary" style={{marginTop:16}}>Submit Request</button>
+                    <button onClick={()=>{if(!lFrom||!lTo){showToast("Pick dates","err");return;}if(lFrom>lTo){showToast("From must be before To","err");return;}setLeaves(p=>[...p,{id:Date.now(),docId:lDoc||doctors[0]?.id||0,from:lFrom,to:lTo,type:lType,status:"pending"}]);showToast("Leave submitted ✓");}} className="btn btn-primary" style={{marginTop:16}}>Submit Request</button>
                   </div>
                   {!leaves.length?(
                     <div className="card" style={{textAlign:"center",padding:40,color:"var(--text-secondary)"}}>No leave requests yet.</div>
-                  ):leaves.map(l=>{
-                    const d=docById(l.docId);if(!d)return null;
+                  ):[...leaves].reverse().map(l=>{
+                    const d=docById(l.docId)||doctors[0];if(!d)return null;
                     const sc=statusColors[l.status]||statusColors.pending;
                     return(
                       <div key={l.id} className="card" style={{display:"flex",alignItems:"center",gap:12,marginBottom:8}}>
