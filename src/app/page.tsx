@@ -12,11 +12,15 @@ import { auth, fetchJobs, applyForJob, db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter, useSearchParams } from "next/navigation";
 
+// Default landing view — shows Chennai listings until the user searches elsewhere
+const DEFAULT_CITY_COORDS = { lat: 13.0827, lng: 80.2707 };
+const DEFAULT_CITY_ZOOM = 11;
+
 export default function HomePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [mapCenter, setMapCenter] = useState({ lat: 22.9734, lng: 78.6569 });
-  const [mapZoom, setMapZoom] = useState(6);
+  const [mapCenter, setMapCenter] = useState(DEFAULT_CITY_COORDS);
+  const [mapZoom, setMapZoom] = useState(DEFAULT_CITY_ZOOM);
   const [highlightedJobId, setHighlightedJobId] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
   const [allJobs, setAllJobs] = useState<Job[]>([]);
@@ -59,6 +63,18 @@ export default function HomePage() {
   useEffect(() => {
     fetchJobs().then(setAllJobs);
   }, []);
+
+  // On first load (no pin-link / search params in the URL), default the
+  // homepage to Chennai so visitors see relevant listings immediately
+  // instead of an empty "No jobs found" state.
+  useEffect(() => {
+    if (allJobs.length === 0) return;
+    if (searchParams.get("lat") || searchParams.get("lng") || searchParams.get("jobId")) return;
+    if (mapJobs.length > 0) return; // already searched/populated
+
+    handleSearch({ lat: DEFAULT_CITY_COORDS.lat, lng: DEFAULT_CITY_COORDS.lng });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allJobs]);
 
   // Handle incoming map pin redirect: /?lat=xx&lng=xx&jobId=yyy
   useEffect(() => {
