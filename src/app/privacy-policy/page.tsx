@@ -85,6 +85,8 @@ export default function PrivacyPolicyPage() {
 
           <p>We collect information directly from you, automatically through your use of the Platform, and from trusted third parties where permitted by law.</p>
 
+          <p>Search queries (location, pincode, or hospital name) entered on the platform, to help us understand demand and improve job coverage across regions.</p>
+
           <p>The categories of information collected may include:</p>
 
           <h3>A. Personal Information</h3>

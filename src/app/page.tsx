@@ -11,6 +11,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth, fetchJobs, applyForJob, db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter, useSearchParams } from "next/navigation";
+import { logSearch } from "@/lib/searchLog";
 
 // Default landing view — shows Chennai listings until the user searches elsewhere
 const DEFAULT_CITY_COORDS = { lat: 13.0827, lng: 80.2707 };
@@ -72,7 +73,7 @@ export default function HomePage() {
     if (searchParams.get("lat") || searchParams.get("lng") || searchParams.get("jobId")) return;
     if (mapJobs.length > 0) return; // already searched/populated
 
-    handleSearch({ lat: DEFAULT_CITY_COORDS.lat, lng: DEFAULT_CITY_COORDS.lng });
+    handleSearch({ lat: DEFAULT_CITY_COORDS.lat, lng: DEFAULT_CITY_COORDS.lng }, { log: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allJobs]);
 
@@ -104,11 +105,15 @@ export default function HomePage() {
     }, 300);
   }, [highlightedJobId, allJobs]);
 
-  const handleSearch = (filters: {
-    lat?: number;
-    lng?: number;
-    hospitalName?: string;
-  }) => {
+  const handleSearch = (
+    filters: {
+      lat?: number;
+      lng?: number;
+      hospitalName?: string;
+    },
+    options: { log?: boolean } = {}
+  ) => {
+    const shouldLog = options.log !== false;
     let results = allJobs;
 
     if (filters.lat && filters.lng) {
@@ -137,7 +142,20 @@ export default function HomePage() {
 
     setMapJobs(results);
     setSelectedJobs([]);
-    
+
+    // Log this search (fire-and-forget, never blocks the UI) — skipped for
+    // the automatic Chennai default view so it doesn't pollute real search data
+    if (shouldLog) {
+      logSearch({
+        searchType: filters.hospitalName ? "hospital" : filters.lat ? "area" : "unknown",
+        queryText: filters.hospitalName || "",
+        lat: filters.lat,
+        lng: filters.lng,
+        resultsCount: results.length,
+        userId: user?.uid || null,
+      });
+    }
+
     // On mobile, show list after search
     if (isMobile && results.length > 0) {
       setShowMobileView('list');
