@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import GoogleMapsProvider from "@/components/GoogleMapsProvider";
 import Footer from "@/components/Footer";
+import ClarityAnalytics from "@/components/ClarityAnalytics";
 import Script from "next/script";
 
 export const metadata: Metadata = {
@@ -72,6 +73,7 @@ export default function RootLayout({
       <body style={{ fontFamily: "Inter, sans-serif" }}>
         <GoogleMapsProvider>{children}</GoogleMapsProvider>
         <Footer />
+        <ClarityAnalytics />
       </body>
     </html>
   );
