@@ -111,6 +111,7 @@ export default function HomePage() {
       lng?: number;
       hospitalName?: string;
       areaText?: string;
+      bounds?: { north: number; south: number; east: number; west: number };
     },
     options: { log?: boolean } = {}
   ) => {
@@ -131,8 +132,24 @@ export default function HomePage() {
           ? (job.hospGeo as any).longitude
           : job.hospGeo.lng;
 
-        return getDistanceKm(filters.lat!, filters.lng!, lat, lng) <= 10;
+        // Precise match: within 10km of the searched point — this is what
+        // makes city/area/pincode search work exactly as before.
+        const withinRadius = getDistanceKm(filters.lat!, filters.lng!, lat, lng) <= 10;
+
+        // Region match: job falls inside the searched place's bounding box —
+        // this is what makes broader searches like "Tamil Nadu" or "India"
+        // actually return jobs anywhere in that state/country, not just
+        // within 10km of its centroid.
+        const withinBounds = filters.bounds
+          ? lat <= filters.bounds.north &&
+            lat >= filters.bounds.south &&
+            lng <= filters.bounds.east &&
+            lng >= filters.bounds.west
+          : false;
+
+        return withinRadius || withinBounds;
       });
+
     }
 
     if (filters.hospitalName) {

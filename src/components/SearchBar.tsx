@@ -2,7 +2,7 @@
 
 import { Autocomplete } from "@react-google-maps/api";
 import { useRef } from "react";
-import { SearchFilters } from "@/types/search";
+import { SearchFilters, RegionBounds } from "@/types/search";
 
 interface SearchBarProps {
   onSearch: (filters: SearchFilters) => void;
@@ -16,16 +16,23 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
   const hospInputRef = useRef<HTMLInputElement | null>(null);
 
   const geocodeText = async (text: string) => {
-    return new Promise<{ lat: number; lng: number; formattedAddress?: string } | null>((resolve) => {
+    return new Promise<{
+      lat: number;
+      lng: number;
+      formattedAddress?: string;
+      bounds?: RegionBounds;
+    } | null>((resolve) => {
       const geocoder = new google.maps.Geocoder();
 
       geocoder.geocode({ address: text }, (results, status) => {
         if (status === "OK" && results?.[0]) {
           const loc = results[0].geometry.location;
+          const box = results[0].geometry.bounds || results[0].geometry.viewport;
           resolve({
             lat: loc.lat(),
             lng: loc.lng(),
             formattedAddress: results[0].formatted_address,
+            bounds: box ? box.toJSON() : undefined,
           });
         } else {
           resolve(null);
@@ -39,10 +46,12 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
     const inputText = areaInputRef.current?.value?.trim();
 
     if (place?.geometry?.location) {
+      const viewport = place.geometry.viewport;
       onSearch({
         lat: place.geometry.location.lat(),
         lng: place.geometry.location.lng(),
         areaText: place.formatted_address || place.name || inputText || "",
+        bounds: viewport?.toJSON(),
       });
       return;
     }
@@ -54,6 +63,7 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
           lat: geo.lat,
           lng: geo.lng,
           areaText: geo.formattedAddress || inputText,
+          bounds: geo.bounds,
         });
       }
     }
