@@ -16,7 +16,7 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
   const hospInputRef = useRef<HTMLInputElement | null>(null);
 
   const geocodeText = async (text: string) => {
-    return new Promise<{ lat: number; lng: number } | null>((resolve) => {
+    return new Promise<{ lat: number; lng: number; formattedAddress?: string } | null>((resolve) => {
       const geocoder = new google.maps.Geocoder();
 
       geocoder.geocode({ address: text }, (results, status) => {
@@ -25,6 +25,7 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
           resolve({
             lat: loc.lat(),
             lng: loc.lng(),
+            formattedAddress: results[0].formatted_address,
           });
         } else {
           resolve(null);
@@ -41,6 +42,7 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
       onSearch({
         lat: place.geometry.location.lat(),
         lng: place.geometry.location.lng(),
+        areaText: place.formatted_address || place.name || inputText || "",
       });
       return;
     }
@@ -48,7 +50,11 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
     if (inputText) {
       const geo = await geocodeText(inputText);
       if (geo) {
-        onSearch(geo);
+        onSearch({
+          lat: geo.lat,
+          lng: geo.lng,
+          areaText: geo.formattedAddress || inputText,
+        });
       }
     }
   };

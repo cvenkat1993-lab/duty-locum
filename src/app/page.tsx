@@ -110,6 +110,7 @@ export default function HomePage() {
       lat?: number;
       lng?: number;
       hospitalName?: string;
+      areaText?: string;
     },
     options: { log?: boolean } = {}
   ) => {
@@ -148,7 +149,7 @@ export default function HomePage() {
     if (shouldLog) {
       logSearch({
         searchType: filters.hospitalName ? "hospital" : filters.lat ? "area" : "unknown",
-        queryText: filters.hospitalName || "",
+        queryText: filters.hospitalName || filters.areaText || "",
         lat: filters.lat,
         lng: filters.lng,
         resultsCount: results.length,
