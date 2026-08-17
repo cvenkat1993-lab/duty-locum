@@ -142,6 +142,7 @@ export default function Header() {
             {!isMobile && (
               <nav style={{ display: "flex", alignItems: "center", gap: 24 }}>
                 <Link href="/browse-jobs" style={navLinkStyle}>Browse Jobs</Link>
+                <Link href="/blog" style={navLinkStyle}>Blog</Link>
 
                 {/* ── Resources dropdown ── */}
                 <div ref={resourcesMenuRef} style={{ position: "relative" }}>
@@ -285,6 +286,7 @@ export default function Header() {
 
             <nav style={{ padding: "8px 0" }}>
               <Link href="/browse-jobs" onClick={closeMobileMenu} style={mobileLinkStyle}>🔍 Browse Jobs</Link>
+              <Link href="/blog" onClick={closeMobileMenu} style={mobileLinkStyle}>📰 Blog</Link>
 
               {/* Resources subsection */}
               <button onClick={() => setIsMobileResourcesOpen(!isMobileResourcesOpen)} style={{

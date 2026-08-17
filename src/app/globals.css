@@ -738,3 +738,13 @@ input::placeholder {
 .hamburger.open {
   transform: rotate(90deg);
 }
+
+.blog-content a {
+  color: var(--primary);
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.blog-content a:hover {
+  color: var(--primary-hover);
+}
